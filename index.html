@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AXIOM — Interactive Portfolio</title>
+  <meta name="description" content="A cinematic, immersive interactive portfolio experience. Explore projects, skills, and experience through a 3D digital journey." />
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
+
+  <!-- Three.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- GSAP + ScrollTrigger -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+
+  <!-- Lenis smooth scroll -->
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       CUSTOM CURSOR
+  ═══════════════════════════════════════════ -->
+  <div id="cursor-outer" class="cursor-ring"></div>
+  <div id="cursor-dot" class="cursor-dot"></div>
+
+  <!-- ═══════════════════════════════════════════
+       LOADING SCREEN
+  ═══════════════════════════════════════════ -->
+  <div id="loader">
+    <canvas id="loader-canvas"></canvas>
+    <div class="loader-content">
+      <div class="loader-scan-line"></div>
+      <div class="loader-text-wrap">
+        <span class="loader-label">INITIALIZING SYSTEM</span>
+        <div class="loader-bar-wrap">
+          <div class="loader-bar" id="loader-bar"></div>
+        </div>
+        <span class="loader-percent" id="loader-percent">0%</span>
+      </div>
+      <div class="loader-glitch-name" data-text="AXIOM">AXIOM</div>
+      <div class="loader-sub">PORTFOLIO_v2.0 // READY</div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       THREE.JS — PRIMARY WEBGL CANVAS
+  ═══════════════════════════════════════════ -->
+  <canvas id="webgl-canvas"></canvas>
+
+  <!-- ═══════════════════════════════════════════
+       MAIN SCROLL CONTAINER
+  ═══════════════════════════════════════════ -->
+  <main id="scroll-container">
+
+    <!-- ── HERO / LANDING ── -->
+    <section id="hero" class="section section--hero">
+      <div class="hero-overlay">
+        <div class="hero-eyebrow">
+          <span class="eyebrow-line"></span>
+          <span class="eyebrow-text">Creative Developer &amp; Digital Architect</span>
+        </div>
+        <h1 class="hero-title">
+          <span class="hero-word" data-word="DESIGN">DESIGN</span>
+          <span class="hero-word" data-word="CODE">CODE</span>
+          <span class="hero-word accent" data-word="IMAGINE">IMAGINE</span>
+        </h1>
+        <p class="hero-sub">I build things that live at the intersection of<br/><em>art, technology, and experience.</em></p>
+        <div class="hero-scroll-hint">
+          <span class="scroll-hint-line"></span>
+          <span class="scroll-hint-text">SCROLL TO EXPLORE</span>
+        </div>
+      </div>
+      <!-- Holographic identity badge -->
+      <div class="holo-badge" id="holo-badge">
+        <div class="holo-inner">
+          <span class="holo-name">ALEX NOVA</span>
+          <span class="holo-role">Digital Experience Engineer</span>
+          <div class="holo-rings">
+            <div class="holo-ring r1"></div>
+            <div class="holo-ring r2"></div>
+            <div class="holo-ring r3"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ABOUT ── -->
+    <section id="about" class="section section--about">
+      <!-- Fragmentation overlay canvas -->
+      <canvas id="frag-canvas" class="frag-canvas"></canvas>
+
+      <div class="about-content" id="about-content">
+        <div class="about-number">01</div>
+        <div class="about-text-block">
+          <h2 class="about-heading">
+            <span class="ah-line">WHO</span>
+            <span class="ah-line">AM I<span class="accent-dot">.</span></span>
+          </h2>
+          <div class="about-bio">
+            <p class="bio-chunk" id="bio-1">I'm a creative developer obsessed with the boundary between the digital and the physical — crafting immersive interfaces that feel alive, responsive, and deeply intentional.</p>
+            <p class="bio-chunk" id="bio-2">My work spans interactive installations, web applications, generative art, and 3D environments. I live at the edge of what browsers can do.</p>
+          </div>
+          <div class="about-stats">
+            <div class="stat-item">
+              <span class="stat-number" data-target="7">0</span>
+              <span class="stat-label">Years Experience</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="43">0</span>
+              <span class="stat-label">Projects Shipped</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number" data-target="12">0</span>
+              <span class="stat-label">Awards Won</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Holographic floating panels -->
+        <div class="holo-panels" id="about-panels">
+          <div class="holo-panel panel-1">
+            <span class="panel-tag">// Front-End</span>
+            <p>Three.js · GSAP · React · WebGL</p>
+          </div>
+          <div class="holo-panel panel-2">
+            <span class="panel-tag">// Back-End</span>
+            <p>Node.js · Python · PostgreSQL</p>
+          </div>
+          <div class="holo-panel panel-3">
+            <span class="panel-tag">// Creative</span>
+            <p>TouchDesigner · Blender · GLSL</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SKILLS ── -->
+    <section id="skills" class="section section--skills">
+      <div class="skills-label">
+        <span class="section-number">02</span>
+        <h2 class="skills-heading">SKILL<span class="accent-stroke">SET</span></h2>
+      </div>
+      <!-- Three.js constellation rendered here via webgl-canvas overlay -->
+      <div class="skills-constellation" id="skills-constellation">
+        <!-- Nodes injected by JS -->
+      </div>
+      <div class="skill-tooltip" id="skill-tooltip">
+        <span class="tooltip-name"></span>
+        <span class="tooltip-level"></span>
+        <div class="tooltip-bar"><div class="tooltip-fill"></div></div>
+      </div>
+    </section>
+
+    <!-- ── PROJECTS ── -->
+    <section id="projects" class="section section--projects">
+      <div class="projects-header">
+        <span class="section-number">03</span>
+        <h2 class="projects-heading">SELECTED<br/>WORK</h2>
+      </div>
+
+      <div class="projects-orbit" id="projects-orbit">
+        <div class="project-tile" data-index="0" data-project="nebula" id="proj-0">
+          <div class="tile-inner">
+            <div class="tile-glow"></div>
+            <div class="tile-content">
+              <span class="tile-tech">Three.js · GLSL</span>
+              <h3 class="tile-name">NEBULA</h3>
+              <p class="tile-desc">Real-time generative cosmos rendered in WebGL</p>
+              <span class="tile-cta">EXPLORE →</span>
+            </div>
+            <div class="tile-number">001</div>
+          </div>
+        </div>
+        <div class="project-tile" data-index="1" data-project="echo" id="proj-1">
+          <div class="tile-inner">
+            <div class="tile-glow"></div>
+            <div class="tile-content">
+              <span class="tile-tech">React · Web Audio API</span>
+              <h3 class="tile-name">ECHO</h3>
+              <p class="tile-desc">Audio-reactive visual synthesizer for live performance</p>
+              <span class="tile-cta">EXPLORE →</span>
+            </div>
+            <div class="tile-number">002</div>
+          </div>
+        </div>
+        <div class="project-tile" data-index="2" data-project="arc" id="proj-2">
+          <div class="tile-inner">
+            <div class="tile-glow"></div>
+            <div class="tile-content">
+              <span class="tile-tech">WebXR · Node.js</span>
+              <h3 class="tile-name">ARC</h3>
+              <p class="tile-desc">Extended reality gallery for digital sculpture</p>
+              <span class="tile-cta">EXPLORE →</span>
+            </div>
+            <div class="tile-number">003</div>
+          </div>
+        </div>
+        <div class="project-tile" data-index="3" data-project="void" id="proj-3">
+          <div class="tile-inner">
+            <div class="tile-glow"></div>
+            <div class="tile-content">
+              <span class="tile-tech">Python · ML · Canvas</span>
+              <h3 class="tile-name">VOID</h3>
+              <p class="tile-desc">Machine-learning generative identity system</p>
+              <span class="tile-cta">EXPLORE →</span>
+            </div>
+            <div class="tile-number">004</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PROJECT DETAIL OVERLAY ── -->
+    <div id="project-modal" class="project-modal" aria-hidden="true">
+      <button class="modal-close" id="modal-close" aria-label="Close project">✕ CLOSE</button>
+      <div class="modal-bg" id="modal-bg">
+        <canvas id="modal-canvas"></canvas>
+      </div>
+      <div class="modal-body">
+        <span class="modal-num" id="modal-num">001</span>
+        <h2 class="modal-title" id="modal-title">PROJECT</h2>
+        <div class="modal-divider"></div>
+        <p class="modal-desc" id="modal-desc">Description goes here.</p>
+        <div class="modal-tags" id="modal-tags"></div>
+        <a href="#" class="modal-link" id="modal-link">VIEW PROJECT ↗</a>
+      </div>
+    </div>
+
+    <!-- ── EXPERIENCE ── -->
+    <section id="experience" class="section section--experience">
+      <div class="exp-label">
+        <span class="section-number">04</span>
+        <h2 class="exp-heading">JOURNEY</h2>
+      </div>
+      <div class="timeline" id="timeline">
+        <div class="timeline-spine"></div>
+        <div class="timeline-item tl-item" data-year="2024">
+          <div class="tl-node"><div class="tl-pulse"></div></div>
+          <div class="tl-content">
+            <span class="tl-year">2024</span>
+            <h3 class="tl-role">Lead Creative Developer</h3>
+            <span class="tl-company">STUDIO PARALLEL</span>
+            <p class="tl-detail">Directed a team of 8 building brand websites, interactive installations, and real-time 3D experiences for global clients.</p>
+          </div>
+        </div>
+        <div class="timeline-item tl-item" data-year="2022">
+          <div class="tl-node"><div class="tl-pulse"></div></div>
+          <div class="tl-content">
+            <span class="tl-year">2022</span>
+            <h3 class="tl-role">Senior Front-End Engineer</h3>
+            <span class="tl-company">AXIOM LABS</span>
+            <p class="tl-detail">Architected WebGL-driven product configurators and data visualization tools used by 200k+ monthly users.</p>
+          </div>
+        </div>
+        <div class="timeline-item tl-item" data-year="2020">
+          <div class="tl-node"><div class="tl-pulse"></div></div>
+          <div class="tl-content">
+            <span class="tl-year">2020</span>
+            <h3 class="tl-role">Interactive Developer</h3>
+            <span class="tl-company">FRACTAL CREATIVE</span>
+            <p class="tl-detail">Crafted award-winning immersive microsites, generative motion campaigns, and WebAR experiences.</p>
+          </div>
+        </div>
+        <div class="timeline-item tl-item" data-year="2018">
+          <div class="tl-node"><div class="tl-pulse"></div></div>
+          <div class="tl-content">
+            <span class="tl-year">2018</span>
+            <h3 class="tl-role">Creative Technologist</h3>
+            <span class="tl-company">SELF-DIRECTED</span>
+            <p class="tl-detail">Freelance digital art, open-source tools, and experimental browser-based installations.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONTACT ── -->
+    <section id="contact" class="section section--contact">
+      <div class="contact-bg-art">
+        <div class="cba-ring r1"></div>
+        <div class="cba-ring r2"></div>
+        <div class="cba-ring r3"></div>
+      </div>
+      <div class="contact-console" id="contact-console">
+        <div class="console-header">
+          <span class="console-dot"></span>
+          <span class="console-dot"></span>
+          <span class="console-dot"></span>
+          <span class="console-title">TRANSMISSION_CHANNEL.exe</span>
+        </div>
+        <div class="console-section-number">05</div>
+        <h2 class="console-heading">INITIATE<br/>CONTACT</h2>
+        <p class="console-subtext">Drop a message into the void.<br/>I'll respond within 48 parsecs.</p>
+        <form class="console-form" id="contact-form" novalidate>
+          <div class="form-field">
+            <label class="field-label" for="f-name">// DESIGNATION</label>
+            <input class="field-input" type="text" id="f-name" name="name" autocomplete="off" placeholder="Your name" />
+            <div class="field-particles" id="fp-name"></div>
+          </div>
+          <div class="form-field">
+            <label class="field-label" for="f-email">// TRANSMISSION_FREQ</label>
+            <input class="field-input" type="email" id="f-email" name="email" autocomplete="off" placeholder="Your email" />
+            <div class="field-particles" id="fp-email"></div>
+          </div>
+          <div class="form-field">
+            <label class="field-label" for="f-msg">// MESSAGE_DATA</label>
+            <textarea class="field-input field-textarea" id="f-msg" name="message" rows="4" placeholder="Your message..."></textarea>
+            <div class="field-particles" id="fp-msg"></div>
+          </div>
+          <button class="console-submit" id="console-submit" type="submit">
+            <span class="submit-text">TRANSMIT →</span>
+            <div class="submit-glow"></div>
+          </button>
+        </form>
+        <div class="console-links">
+          <a href="#" class="c-link" id="link-github">GitHub ↗</a>
+          <a href="#" class="c-link" id="link-linkedin">LinkedIn ↗</a>
+          <a href="#" class="c-link" id="link-twitter">X / Twitter ↗</a>
+        </div>
+      </div>
+    </section>
+
+  </main><!-- /#scroll-container -->
+
+  <!-- ═══════════════════════════════════════════
+       FLOATING NAV
+  ═══════════════════════════════════════════ -->
+  <nav class="float-nav" id="float-nav">
+    <a href="#hero"       class="nav-dot active" data-label="Home"       id="nd-hero"></a>
+    <a href="#about"      class="nav-dot" data-label="About"      id="nd-about"></a>
+    <a href="#skills"     class="nav-dot" data-label="Skills"     id="nd-skills"></a>
+    <a href="#projects"   class="nav-dot" data-label="Projects"   id="nd-projects"></a>
+    <a href="#experience" class="nav-dot" data-label="Experience" id="nd-experience"></a>
+    <a href="#contact"    class="nav-dot" data-label="Contact"    id="nd-contact"></a>
+  </nav>
+
+  <script src="script.js"></script>
+</body>
+</html>
