@@ -235,7 +235,9 @@ function initLoader(onComplete) {
 let renderer, scene, camera;
 let starField, nebulaParticles;
 let planets = [];
-let blackHole, accretionDisk, neutronHole;
+let blackHole, accretionDisk;
+let neutronStar, pulsarBeams;
+let shootingStars = [];
 let mouseNorm = { x: 0, y: 0 };
 let time = 0;
 
@@ -254,19 +256,19 @@ function initThreeJS() {
 
   // 1. Vast Starfield (Point light stars)
   const starGeo = new THREE.BufferGeometry();
-  const starPos = new Float32Array(8000 * 3);
-  for(let i=0; i<8000; i++) {
-    starPos[i*3] = rand(-600, 600);
-    starPos[i*3+1] = rand(-600, 600);
-    starPos[i*3+2] = rand(-800, 100);
+  const starPos = new Float32Array(10000 * 3);
+  for(let i=0; i<10000; i++) {
+    starPos[i*3] = rand(-800, 800);
+    starPos[i*3+1] = rand(-800, 800);
+    starPos[i*3+2] = rand(-1000, 200);
   }
   starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-  const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, transparent: true, opacity: 0.8 });
+  const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.8, transparent: true, opacity: 0.9 });
   starField = new THREE.Points(starGeo, starMat);
   scene.add(starField);
 
   // 2. Cosmic Nebula Dust (Colored fields)
-  const COUNT = 4000;
+  const COUNT = 5000;
   const nebGeo = new THREE.BufferGeometry();
   const nebPos = new Float32Array(COUNT * 3);
   const nebCol = new Float32Array(COUNT * 3);
@@ -317,46 +319,89 @@ function initThreeJS() {
   scene.add(nebulaParticles);
 
   // 3. Black Hole / Accretion Disk (Deep in Z axis)
-  const bhGeo = new THREE.SphereGeometry(15, 64, 64);
+  const bhGroup = new THREE.Group();
+  bhGroup.position.set(-60, 40, -450); // Move much deeper and off-center
+  
+  const bhGeo = new THREE.SphereGeometry(25, 64, 64);
   const bhMat = new THREE.MeshBasicMaterial({ color: 0x000000 });
   blackHole = new THREE.Mesh(bhGeo, bhMat);
-  blackHole.position.set(-40, 30, -350); // Move deeper
+  bhGroup.add(blackHole);
   
-  // Disk
-  const diskGeo = new THREE.RingGeometry(18, 45, 128);
+  // Outer glowing aura of black hole
+  const bhAuraGeo = new THREE.SphereGeometry(30, 32, 32);
+  const bhAuraMat = new THREE.MeshBasicMaterial({ color: 0xff7b00, transparent: true, opacity: 0.1, blending: THREE.AdditiveBlending });
+  const bhAura = new THREE.Mesh(bhAuraGeo, bhAuraMat);
+  bhGroup.add(bhAura);
+
+  // High-def inner and outer disk
+  const diskGeo = new THREE.RingGeometry(28, 70, 128);
   const diskMat = new THREE.MeshBasicMaterial({ 
-    color: 0xff7b00, 
+    color: 0xff4d00, 
     side: THREE.DoubleSide, 
     transparent: true, 
-    opacity: 0.7,
+    opacity: 0.8,
     blending: THREE.AdditiveBlending
   });
   accretionDisk = new THREE.Mesh(diskGeo, diskMat);
-  accretionDisk.rotation.x = Math.PI / 2.5;
-  blackHole.add(accretionDisk);
-  scene.add(blackHole);
+  accretionDisk.rotation.x = Math.PI / 2.2;
+  bhGroup.add(accretionDisk);
+  scene.add(bhGroup);
 
-  // 4. Planets (Wireframe or basic textured)
-  const pGeo1 = new THREE.IcosahedronGeometry(8, 2);
+  // 4. Neutron Star (Pulsar)
+  const pulsarGroup = new THREE.Group();
+  pulsarGroup.position.set(120, -50, -280);
+  
+  const nsGeo = new THREE.SphereGeometry(4, 32, 32);
+  const nsMat = new THREE.MeshBasicMaterial({ color: 0x00e6ff });
+  neutronStar = new THREE.Mesh(nsGeo, nsMat);
+  pulsarGroup.add(neutronStar);
+
+  // Pulsar Beams
+  const beamGeo = new THREE.CylinderGeometry(0.1, 15, 300, 32, 1, true);
+  const beamMat = new THREE.MeshBasicMaterial({ 
+    color: 0x00e6ff, 
+    transparent: true, 
+    opacity: 0.15, 
+    blending: THREE.AdditiveBlending,
+    side: THREE.DoubleSide
+  });
+  pulsarBeams = new THREE.Mesh(beamGeo, beamMat);
+  pulsarGroup.add(pulsarBeams);
+  scene.add(pulsarGroup);
+
+  // 5. Planets (Enhanced with secondary atmospheres)
+  const pGeo1 = new THREE.IcosahedronGeometry(12, 2);
   const pMat1 = new THREE.MeshBasicMaterial({ color: 0x7b2fff, wireframe: true, transparent: true, opacity: 0.5 });
   const planet1 = new THREE.Mesh(pGeo1, pMat1);
-  planet1.position.set(50, -20, -100);
+  planet1.position.set(60, -30, -120);
   planets.push(planet1);
   scene.add(planet1);
 
-  const pGeo2 = new THREE.IcosahedronGeometry(12, 1);
-  const pMat2 = new THREE.MeshBasicMaterial({ color: 0x00e6ff, wireframe: true, transparent: true, opacity: 0.35 });
+  const pGeo2 = new THREE.IcosahedronGeometry(18, 1);
+  const pMat2 = new THREE.MeshBasicMaterial({ color: 0x00e6ff, wireframe: true, transparent: true, opacity: 0.25 });
   const planet2 = new THREE.Mesh(pGeo2, pMat2);
-  planet2.position.set(-60, -40, -180);
+  planet2.position.set(-80, -60, -220);
   planets.push(planet2);
   scene.add(planet2);
 
-  const pGeo3 = new THREE.SphereGeometry(6, 32, 32);
+  const pGeo3 = new THREE.SphereGeometry(8, 32, 32);
   const pMat3 = new THREE.MeshBasicMaterial({ color: 0xff4d6d, transparent: true, opacity: 0.9 });
   const planet3 = new THREE.Mesh(pGeo3, pMat3);
-  planet3.position.set(20, 50, -250);
+  
+  // Atmosphere for planet 3
+  const atmGeo = new THREE.SphereGeometry(9.5, 32, 32);
+  const atmMat = new THREE.MeshBasicMaterial({ color: 0xff4d6d, transparent: true, opacity: 0.2, blending: THREE.AdditiveBlending });
+  const atm = new THREE.Mesh(atmGeo, atmMat);
+  planet3.add(atm);
+  
+  planet3.position.set(30, 60, -320);
   planets.push(planet3);
   scene.add(planet3);
+  
+  // 6. Shooting Stars System
+  for(let i=0; i<5; i++) {
+    createShootingStar();
+  }
 
   // Add ambient light
   const ambient = new THREE.AmbientLight(0x222222);
@@ -366,6 +411,51 @@ function initThreeJS() {
   window.addEventListener('mousemove', e => {
     mouseNorm.x = (e.clientX / window.innerWidth)  * 2 - 1;
     mouseNorm.y =-(e.clientY / window.innerHeight) * 2 + 1;
+  });
+}
+
+function createShootingStar() {
+  const geom = new THREE.BufferGeometry();
+  const v = new Float32Array([0,0,0, 0,0, -40]); // long tail
+  geom.setAttribute('position', new THREE.BufferAttribute(v, 3));
+  const mat = new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0 });
+  const line = new THREE.Line(geom, mat);
+  
+  // Random start
+  line.position.set(rand(-300, 300), rand(100, 300), rand(-100, -400));
+  // Random angle
+  line.rotation.set(rand(-0.5, 0.5), rand(-Math.PI, Math.PI), 0);
+  scene.add(line);
+  shootingStars.push({ mesh: line, active: false });
+}
+
+function triggerShootingStar(star) {
+  star.active = true;
+  star.mesh.position.set(rand(-400, 400), rand(100, 300), rand(-200, -600));
+  star.mesh.rotation.x = rand(-0.2, 0.2);
+  star.mesh.rotation.y = rand(-1, 1);
+  
+  star.mesh.material.opacity = 1;
+  
+  const dist = 500;
+  const dir = new THREE.Vector3(0,0,-1).applyEuler(star.mesh.rotation);
+  
+  gsap.to(star.mesh.position, {
+    x: star.mesh.position.x + dir.x * dist,
+    y: star.mesh.position.y + dir.y * dist,
+    z: star.mesh.position.z + dir.z * dist,
+    duration: rand(1.5, 3),
+    ease: "power1.in",
+    onUpdate() {
+      // Fade out near end
+      if(this.progress() > 0.7) {
+        star.mesh.material.opacity = (1 - this.progress()) * 3;
+      }
+    },
+    onComplete() {
+      star.mesh.material.opacity = 0;
+      star.active = false;
+    }
   });
 }
 
@@ -390,32 +480,53 @@ function threeLoop() {
   starField.rotation.y = time * 0.02;
 
   // Accretion disk spinning
-  accretionDisk.rotation.z -= 0.02;
+  accretionDisk.rotation.z -= 0.04;
   // Pulsing effect on disk
-  accretionDisk.scale.setScalar(1 + Math.sin(time * 5) * 0.05);
+  accretionDisk.scale.setScalar(1 + Math.sin(time * 8) * 0.03);
+
+  // Neutron Star/Pulsar rapid spin
+  pulsarBeams.rotation.x = time * 12;
+  pulsarBeams.rotation.z = time * 2;
+  neutronStar.scale.setScalar(1 + Math.sin(time * 20) * 0.1);
+
+  // Manage shooting stars
+  if(Math.random() < 0.02) { // 2% chance per frame to fire an inactive star
+    const inactive = shootingStars.find(s => !s.active);
+    if(inactive) triggerShootingStar(inactive);
+  }
 
   // Planets orbiting/spinning
   planets[0].rotation.x += 0.005;
-  planets[0].rotation.y += 0.01;
+  planets[0].rotation.y += 0.008;
   planets[1].rotation.z -= 0.003;
-  planets[1].rotation.x -= 0.003;
+  planets[1].rotation.x -= 0.004;
 
-  planets[2].position.x = 20 + Math.sin(time * 0.5) * 40;
-  planets[2].position.z = -250 + Math.cos(time * 0.5) * 40;
+  planets[2].position.x = 30 + Math.sin(time * 0.3) * 60;
+  planets[2].position.z = -320 + Math.cos(time * 0.3) * 60;
   planets[2].rotation.y += 0.02;
 
   // Camera parallax (gentle orbital sway based on mouse)
-  camera.position.x += (mouseNorm.x * 12 - camera.position.x) * 0.04;
-  camera.position.y += (mouseNorm.y * 8 - camera.position.y) * 0.04;
+  camera.position.x += (mouseNorm.x * 15 - camera.position.x) * 0.05;
+  camera.position.y += (mouseNorm.y * 10 - camera.position.y) * 0.05;
 
   // Immersive Scroll Dive! Camera Z plummets deep into space towards black hole
-  const targetZ = 120 - scrollProgress * 500; // Dive deep towards black hole at Z = -350
-  camera.position.z += (targetZ - camera.position.z) * 0.06;
+  const targetZ = 120 - scrollProgress * 600; // Dive past planets into the black hole zone
+  camera.position.z += (targetZ - camera.position.z) * 0.08;
 
   // Rotate camera slightly based on scroll to simulate complex trajectory passing planets
-  camera.rotation.z = scrollProgress * Math.PI * 0.1;
-  camera.rotation.x = mouseNorm.y * 0.05 + Math.sin(scrollProgress * Math.PI) * 0.1;
-  camera.rotation.y = mouseNorm.x * 0.05;
+  camera.rotation.z = scrollProgress * Math.PI * 0.15;
+  camera.rotation.x = mouseNorm.y * 0.05 + Math.sin(scrollProgress * Math.PI) * 0.15;
+  camera.rotation.y = mouseNorm.x * 0.05 - scrollProgress * 0.1;
+
+  // Gravitational lensing effect (fov warping near black hole)
+  if (scrollProgress > 0.8) {
+    const intensity = (scrollProgress - 0.8) * 5; // 0 to 1
+    camera.fov = 60 + intensity * 30; // Warps FOV to suck you in
+    camera.updateProjectionMatrix();
+  } else {
+    camera.fov = 60;
+    camera.updateProjectionMatrix();
+  }
 
   renderer.render(scene, camera);
 }

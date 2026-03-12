@@ -101,9 +101,11 @@ Futuristic console terminal UI
 
 | System | Technology | Description |
 |--------|-----------|-------------|
-| 🌌 **Particle Cosmos** | Three.js | 8,000 stars & 4,000 colored nebula dust particles |
-| 🪐 **Celestial Bodies**| Three.js | Black hole with accretion disk + orbiting planets |
+| 🌌 **Particle Cosmos** | Three.js | 10,000 stars & 5,000 colored nebula dust particles |
+| 🚀 **Shooting Stars** | Three.js | Randomly generated, high-velocity light streaks with long trails |
+| 🪐 **Celestial Bodies**| Three.js | Black hole + accretion disk, orbiting planets, and a **Spinning Neutron Star** |
 | 📷 **Camera Dive** | Three.js | Z-position dives deep into the black hole on scroll |
+| 🌀 **Gravitational Lensing** | Three.js | Camera Field of View (FOV) warps rapidly as you approach the black hole |
 | 🖱️ **Mouse Parallax** | GSAP | Holographic badge + camera sway with cursor |
 | ✦ **Hero Reveal** | GSAP | Words stagger up from clipping mask on load |
 | 🔢 **Counter Animation** | GSAP | Numbers tween to target value when scrolled into view |
