@@ -30,9 +30,9 @@
 
 ## ✦ What is AXIOM?
 
-AXIOM is a **cinematic interactive portfolio** that behaves like a visual journey rather than a webpage. Scrolling controls the entire narrative — triggering environment transformations, 3D camera movements, fragmentation effects, and kinetic typography moments.
+AXIOM is a **cinematic interactive portfolio** that behaves like a visual journey rather than a webpage. Scrolling controls the entire narrative — triggering a deep dive towards a supermassive black hole, environment transformations, 3D camera movements, fragmentation effects, and kinetic typography moments.
 
-Designed to feel like a **sci-fi digital art installation**, every section uses a different immersive technique to tell the story.
+Designed to feel like a **deep space digital art installation**, every section uses a different immersive technique to tell the story.
 
 ---
 
@@ -43,7 +43,7 @@ Designed to feel like a **sci-fi digital art installation**, every section uses 
 <td width="50%" align="center">
 
 **01 — Hero**  
-Three.js particle cosmos + kinetic type
+Three.js black hole & planets + kinetic type
 
 ![Hero](screenshots/hero.png)
 
@@ -51,7 +51,7 @@ Three.js particle cosmos + kinetic type
 <td width="50%" align="center">
 
 **02 — About**  
-Geometric fragment canvas + holographic panels
+Geometric fragment canvas + deep space panels
 
 ![About](screenshots/about.png)
 
@@ -101,21 +101,21 @@ Futuristic console terminal UI
 
 | System | Technology | Description |
 |--------|-----------|-------------|
-| 🌌 **Particle Cosmos** | Three.js | 3,500 vertex-colored particles in spherical distribution |
-| 🔷 **Wireframe Geometry** | Three.js | 6 rotating octahedra / tetrahedra orbiting in background |
-| 📷 **Camera Fly-Through** | Three.js | Z-position eases forward as you scroll down the page |
-| 🖱️ **Mouse Parallax** | GSAP | Holographic badge + camera respond to cursor position |
+| 🌌 **Particle Cosmos** | Three.js | 8,000 stars & 4,000 colored nebula dust particles |
+| 🪐 **Celestial Bodies**| Three.js | Black hole with accretion disk + orbiting planets |
+| 📷 **Camera Dive** | Three.js | Z-position dives deep into the black hole on scroll |
+| 🖱️ **Mouse Parallax** | GSAP | Holographic badge + camera sway with cursor |
 | ✦ **Hero Reveal** | GSAP | Words stagger up from clipping mask on load |
 | 🔢 **Counter Animation** | GSAP | Numbers tween to target value when scrolled into view |
 | 💎 **Fragment Canvas** | Canvas 2D | Geometric shards dissolve in/out during About section |
 | 🕸️ **Skill Constellation** | SVG + DOM | 12 nodes orbit slowly, connected by animated SVG dashlines |
 | 🗂️ **3D Project Tiles** | CSS 3D + GSAP | Perspective tilt on hover, per-project color accent |
-| 🎬 **Project Modal** | Canvas + GSAP | Cinematic fullscreen overlay with per-project particle field |
-| ⏱️ **Timeline Nodes** | GSAP ScrollTrigger | Nodes pulse and glow as they enter the viewport |
-| ⚡ **Input Particles** | GSAP | Micro-burst on contact field focus |
+| 🎬 **Project Modal** | Canvas + GSAP | Cinematic fullscreen overlay with a gravity well particle effect |
+| ⏱️ **Timeline Nodes** | GSAP ScrollTrigger | Nodes pulse and glow brightly as they enter the viewport |
+| ⚡ **Input Particles** | DOM / GSAP | Micro-burst on contact field focus |
 | 💫 **Loading Sequence** | Canvas 2D + GSAP | Particle graph + progress bar + CSS glitch title reveal |
-| ⬤ **Magnetic Cursor** | RAF lerp | Ring lags behind dot, expands and changes color on hover |
-| 🌀 **Smooth Scroll** | Lenis | 1.25s inertial scroll with custom power easing |
+| ☄️ **Comet Cursor** | RAF lerp + Canvas | Velocity-stretched tail with emitting particle sparks |
+| 🌀 **Smooth Scroll** | Lenis | 1.4s inertial scroll with custom power easing |
 
 ---
 
